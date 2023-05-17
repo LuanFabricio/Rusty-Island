@@ -1,3 +1,7 @@
+use crate::traits::Draw;
+
+mod render;
+mod traits;
 mod utils;
 
 fn main() {
@@ -12,5 +16,11 @@ fn main() {
 
     utils::height_map::create_lakes(&mut hm, 20);
     utils::height_map::print_height_map(&utils::height_map::smooth_height_map(hm));
+
+    let mut glium_render = render::glium::GliumRender::new("Teste");
+
+    loop {
+        glium_render.draw_scene(hm);
+    }
     println!("Hello, world!");
 }
