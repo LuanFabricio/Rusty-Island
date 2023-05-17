@@ -1,9 +1,16 @@
 mod utils;
 
 fn main() {
-    let mut hm = utils::height_map::init_height_map::<3, 3>(0_f32);
+    let mut hm = utils::height_map::init_height_map::<10, 20>(-1_f32);
     println!("{hm:?}");
-    utils::height_map::create_land(&mut hm, 4);
+
+    let shm = utils::height_map::smooth_height_map(hm);
+    println!("{shm:?}");
+
+    utils::height_map::create_land(&mut hm, 150);
     println!("{hm:?}");
+
+    utils::height_map::create_lakes(&mut hm, 20);
+    utils::height_map::print_height_map(&utils::height_map::smooth_height_map(hm));
     println!("Hello, world!");
 }

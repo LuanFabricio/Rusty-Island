@@ -66,3 +66,42 @@ mod get_height_map_position {
         assert!((pos_x == 0 && pos_y == 1) || (pos_x == 1 && pos_y == 0))
     }
 }
+
+mod smooth_height_map {
+    use super::*;
+
+    #[test]
+    fn should_change_the_map() {
+        let mut height_map = init_height_map::<3, 3>(0_f32);
+        height_map[1][1] = 1_f32;
+
+        let smooth_height_map = smooth_height_map(height_map);
+
+        assert_ne!(smooth_height_map, height_map);
+    }
+}
+
+mod create_lakes {
+    use super::*;
+
+    #[test]
+    fn should_create_lakes() {
+        let mut height_map = init_height_map::<5, 5>(LAND_VALUE);
+
+        const EXPECTED_TOTAL_LAKE: usize = 5;
+        create_lakes(&mut height_map, EXPECTED_TOTAL_LAKE);
+
+        let mut total_lake = 0_usize;
+
+        for row in height_map {
+            for item in row {
+                if item == LAKE_VALUE {
+                    println!("total_lake");
+                    total_lake += 1;
+                }
+            }
+        }
+
+        assert_eq!(total_lake, EXPECTED_TOTAL_LAKE);
+    }
+}
