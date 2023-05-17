@@ -1,9 +1,10 @@
 Projeto de computação gráfica implementado em Rust utilizando OpenGL.
 
 O projeto deve ter: <br>
-  - [ ] Geração aleatória de terreno (ilha).
-    - [ ] Adicionar height map para geração de terreno.
-  - [ ] Geração aleatória de lagos na ilha.
+  - [X] Geração aleatória de terreno (ilha).
+    - [X] Adicionar height map para geração de terreno.
+  - [X] Geração aleatória de lagos na ilha.
+  - [ ] Exibir cena.
   - [ ] Adicionar leitura de modelos 3D.
   - [ ] Exibir dois tipos de animais terrestres.
     - [ ] Todos os animais devem ter um modelo 3D.
