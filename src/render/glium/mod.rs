@@ -1,24 +1,26 @@
-mod camera;
-mod mesh;
-mod normal;
-mod teapot;
-mod util;
-mod vertex;
+pub mod camera;
+pub mod mesh;
+pub mod normal;
+pub mod util;
+pub mod vertex;
 
 use glium::Surface;
 
-use crate::traits::Draw;
-
-use self::{camera::Camera, mesh::Mesh, normal::Normal, vertex::Vertex};
+use self::{camera::Camera, mesh::Mesh, vertex::Vertex};
 
 pub struct GliumRender {
-    pub event_loop: glium::glutin::event_loop::EventLoop<()>,
-    display: glium::Display,
+    pub display: glium::Display,
     camera: Camera,
+    meshes: Vec<Mesh>,
 }
 
-impl Draw for GliumRender {
-    fn new(title: &str) -> Self {
+impl GliumRender {
+    /// Constructor to create the glium render.
+    ///
+    /// # Arguments
+    /// * `title` - Title of the window.
+    ///
+    pub fn new(title: &str) -> (Self, glium::glutin::event_loop::EventLoop<()>) {
         let event_loop = glium::glutin::event_loop::EventLoop::new();
 
         let wb = glium::glutin::window::WindowBuilder::new()
@@ -29,50 +31,53 @@ impl Draw for GliumRender {
 
         let display = glium::Display::new(wb, cb, &event_loop).unwrap();
 
-        Self {
+        (
+            Self {
+                display,
+                camera: Camera::new([0.0, 0.0, -5.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]),
+                meshes: vec![],
+            },
             event_loop,
-            display,
-            camera: Camera::new([2.0, -1.0, 1.0], [-2.0, 1.0, 1.0], [0.0, 1.0, 0.0]),
-        }
+        )
     }
 
-    fn draw_scene<const W: usize, const H: usize>(&mut self, height_map: [[f32; H]; W]) {
-        let triangle_shape = self::teapot::VERTICES;
+    /// Function to draw the scene (using the meshes of the struct).
+    pub fn draw_scene(&mut self) {
+        // let triangle_shape = self::teapot::VERTICES;
 
-        let triangle_normals = self::teapot::NORMALS;
+        // let triangle_normals = self::teapot::NORMALS;
 
-        let triangle_vertex_buffer =
-            glium::VertexBuffer::new(&self.display, &triangle_shape).unwrap();
-        let triangle_normals_buffer =
-            glium::VertexBuffer::new(&self.display, &triangle_normals).unwrap();
+        // let triangle_vertex_buffer =
+        //     glium::VertexBuffer::new(&self.display, &triangle_shape).unwrap();
+        // let triangle_normals_buffer =
+        //     glium::VertexBuffer::new(&self.display, &triangle_normals).unwrap();
 
-        let indices = glium::IndexBuffer::new(
-            &self.display,
-            glium::index::PrimitiveType::TrianglesList,
-            &self::teapot::INDICES,
-        )
-        .unwrap();
+        // let indices = glium::IndexBuffer::new(
+        //     &self.display,
+        //     glium::index::PrimitiveType::TrianglesList,
+        //     &self::teapot::INDICES,
+        // )
+        // .unwrap();
 
-        let vertex_shader_src = GliumRender::create_default_vertex_shader();
+        // let vertex_shader_src = GliumRender::create_default_vertex_shader();
 
-        let fragment_shader_src = GliumRender::create_default_fragment_shader();
+        // let fragment_shader_src = GliumRender::create_default_fragment_shader();
 
-        let shader_program = self
-            .create_shader_program(vertex_shader_src, fragment_shader_src)
-            .unwrap();
+        // let shader_program = self
+        //     .create_shader_program(vertex_shader_src, fragment_shader_src)
+        //     .unwrap();
 
-        let triangle_mesh = Mesh::new(
-            triangle_vertex_buffer,
-            triangle_normals_buffer,
-            indices,
-            shader_program,
-            [
-                [0.01, 0.0, 0.0, 0.0],
-                [0.0, 0.01, 0.0, 0.0],
-                [0.0, 0.0, 0.01, 0.0],
-                [0.0, 0.0, 2.0, 1.0_f32],
-            ],
-        );
+        // let triangle_mesh = Mesh::new(
+        //     triangle_vertex_buffer,
+        //     indices,
+        //     shader_program,
+        //     [
+        //         [0.01, 0.0, 0.0, 0.0],
+        //         [0.0, 0.01, 0.0, 0.0],
+        //         [0.0, 0.0, 0.01, 0.0],
+        //         [0.0, 0.0, 2.0, 1.0_f32],
+        //     ],
+        // );
 
         let mut frame = self.display.draw();
 
@@ -89,24 +94,41 @@ impl Draw for GliumRender {
         };
         let light = [-1.0, 0.4, 0.9_f32];
 
-        println!("{:?}", self.camera.get_view_matrix());
+        // triangle_mesh.draw(
+        //     &mut frame,
+        //     &glium::uniform! {
+        //         view: self.camera.get_view_matrix(),
+        //         matrix: triangle_mesh.matrix,
+        //         perspective: perspective,
+        //         u_light: light,
+        //     },
+        //     &params,
+        // );
 
-        triangle_mesh.draw(
-            &mut frame,
-            &glium::uniform! {
-                view: self.camera.get_view_matrix(),
-                matrix: triangle_mesh.matrix,
-                perspective: perspective,
-                u_light: light,
-            },
-            &params,
-        );
+        // let height_map_mesh = height_map_to_mesh(height_map, &self.display);
+
+        for mesh in self.meshes.iter() {
+            mesh.draw(
+                &mut frame,
+                &glium::uniform! {
+                    view: self.camera.get_view_matrix(),
+                    perspective: perspective,
+                    u_light: light,
+                    matrix: mesh.matrix,
+                    ambient_color: mesh.ambient,
+                    diffuse_color: mesh.diffuse,
+                    specular_color: mesh.specular,
+                },
+                &params,
+            );
+        }
 
         frame.finish().unwrap();
     }
 }
 
 impl GliumRender {
+    /// Default function to create a simple vertex shader program.
     pub fn create_default_vertex_shader() -> &'static str {
         r#"
             #version 140
@@ -128,21 +150,36 @@ impl GliumRender {
         "#
     }
 
+    /// Default function to create a simple fragment shader program.
     pub fn create_default_fragment_shader() -> &'static str {
         r#"
             #version 140
 
             in vec3 v_normal;
+            in vec3 v_position;
 
             out vec4 color;
 
             uniform vec3 u_light;
 
+            uniform vec3 ambient_color;
+            uniform vec3 diffuse_color;
+            uniform vec3 specular_color;
+
             void main() {
-                float brightness = dot(normalize(v_normal), normalize(u_light));
-                vec3 dark_color = vec3(0.6, 0.0, 0.0);
-                vec3 regular_color = vec3(1.0, 0.0, 0.0);
-                color = vec4(mix(dark_color, regular_color, brightness), 1.0);
+                float diffuse = max(dot(normalize(v_normal), normalize(u_light)), 0.0);
+
+                // float brightness = dot(normalize(v_normal), normalize(u_light));
+
+                // vec3 dark_color = vec3(0.6, 0.0, 0.0);
+                // vec3 regular_color = vec3(1.0, 0.0, 0.0);
+
+                vec3 camera_dir = normalize(-v_position);
+                vec3 half_direction = normalize(normalize(u_light) + camera_dir);
+                float specular = pow(max(dot(half_direction, normalize(v_normal)), 0.0), 16.0);
+
+                // color = vec4(mix(dark_color, regular_color, brightness), 1.0);
+                color = vec4(ambient_color + diffuse * diffuse_color + specular * specular_color, 1.0);
             }
         "#
     }
@@ -155,6 +192,11 @@ impl GliumRender {
         glium::Program::from_source(&self.display, vertex_shader, fragment_shader, None)
     }
 
+    /// Function to calculate the perspective matrix (for the scene).
+    ///
+    /// # Arguments
+    /// * `frame` - Frame that will be used to draw.
+    ///
     fn get_perspective_matrix(frame: &glium::Frame) -> [[f32; 4]; 4] {
         let (width, height) = frame.get_dimensions();
         let aspect_ratio = height as f32 / width as f32;
@@ -171,5 +213,18 @@ impl GliumRender {
             [0.0, 0.0, (zfar + znear) / (zfar - znear), 1.0],
             [0.0, 0.0, -(2.0 * zfar * znear) / (zfar - znear), 0.0],
         ]
+    }
+
+    /// Function to add the camera position.
+    ///
+    /// # Arguments
+    /// * `vec_pos` - Vector to move the camera (adding).
+    ///
+    pub fn add_camera(&mut self, vec_pos: [f32; 3]) {
+        self.camera.add_position(vec_pos);
+    }
+
+    pub fn add_mesh(&mut self, mesh: Mesh) {
+        self.meshes.push(mesh);
     }
 }

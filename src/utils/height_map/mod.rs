@@ -216,7 +216,7 @@ fn get_valid_lake_position<const W: usize, const H: usize>(
     let mut y = rand.gen_range(0..H);
 
     while !is_valid_lake_position(height_map, x, y) {
-        println!("{x} {y} - {}", is_valid_lake_position(height_map, x, y));
+        // println!("{x} {y} - {}", is_valid_lake_position(height_map, x, y));
         x = rand.gen_range(0..W);
         y = rand.gen_range(0..H);
     }

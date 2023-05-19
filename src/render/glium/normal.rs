@@ -1,6 +1,6 @@
 use glium::implement_vertex;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Normal {
     pub normal: [f32; 3],
 }
