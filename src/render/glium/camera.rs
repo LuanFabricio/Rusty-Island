@@ -1,6 +1,13 @@
+use super::util::{cross_vec3, normalize};
+
+const DEFAULT_DIRECTION: [f32; 3] = [0_f32, 0_f32, 1_f32];
+const DEFAULT_RIGHT: [f32; 3] = [-1_f32, 0_f32, 0_f32];
+const DEFAULT_UP: [f32; 3] = [0_f32, 1_f32, 0_f32];
+
 pub struct Camera {
     position: [f32; 3],
     direction: [f32; 3],
+    right: [f32; 3],
     up: [f32; 3],
     rotation_x: f32,
     rotation_y: f32,
@@ -18,6 +25,7 @@ impl Camera {
         Self {
             position,
             direction,
+            right: cross_vec3(direction, up),
             up,
             rotation_x: 0_f32,
             rotation_y: 0_f32,
@@ -73,6 +81,34 @@ impl Camera {
     }
 
     pub fn rotate(&mut self, rotation: (f32, f32)) {
-        // TODO: Implement rotation based on FPS games (Half-Life, Counter-Strike etc) for camera.
+        // FIX: Rotation not working.
+        self.rotation_x = self.rotation_x + rotation.0;
+        self.rotation_y = self.rotation_y + rotation.1;
+
+        self.rotate_right();
+        self.rotate_up();
+        self.rotate_direction();
+    }
+
+    fn rotate_up(&mut self) {
+        let radians = self.rotation_y * std::f32::consts::PI / 180_f32;
+
+        self.up[1] = self.up[1] * radians.cos() - self.up[2] * radians.sin();
+        self.up[2] = self.up[2] * radians.sin() + self.up[2] * radians.cos();
+
+        self.up = normalize(self.up);
+    }
+
+    fn rotate_right(&mut self) {
+        let radians = self.rotation_x * std::f32::consts::PI / 180_f32;
+
+        self.right[0] = self.right[0] * radians.cos() - self.right[1] * radians.sin();
+        self.right[1] = -self.right[0] * radians.sin() + self.right[1] * radians.cos();
+
+        self.right = normalize(self.right);
+    }
+
+    fn rotate_direction(&mut self) {
+        self.direction = normalize(cross_vec3(self.up, self.right));
     }
 }

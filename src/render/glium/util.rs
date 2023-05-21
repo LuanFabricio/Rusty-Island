@@ -13,10 +13,10 @@ use super::{mesh::Mesh, GliumRender};
 /// assert_eq!(normalized_array, [1_f32, 0_f32, 0_f32]);
 ///
 pub fn normalize<const N: usize>(vector: [f32; N]) -> [f32; N] {
-    let mut len: f32 = 0_f32;
+    let mut len: f64 = 0_f64;
 
     for item in vector.iter() {
-        len += item * item;
+        len += (item * item) as f64;
     }
 
     len = len.sqrt();
@@ -24,7 +24,7 @@ pub fn normalize<const N: usize>(vector: [f32; N]) -> [f32; N] {
     let mut new_vector = [0_f32; N];
 
     for i in 0..N {
-        new_vector[i] = vector[i] / len;
+        new_vector[i] = vector[i] / len as f32;
     }
 
     new_vector
@@ -177,7 +177,7 @@ fn get_normal<const W: usize, const H: usize>(
 /// * `v1` - First vector.
 /// * `v2` - Second vector.
 ///
-fn cross_vec3(v1: [f32; 3], v2: [f32; 3]) -> [f32; 3] {
+pub fn cross_vec3(v1: [f32; 3], v2: [f32; 3]) -> [f32; 3] {
     [
         v1[1] * v2[2] - v1[2] * v2[1],
         v1[2] * v2[0] - v1[0] * v2[2],

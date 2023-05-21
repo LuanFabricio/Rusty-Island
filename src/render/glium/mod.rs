@@ -34,7 +34,7 @@ impl GliumRender {
         (
             Self {
                 display,
-                camera: Camera::new([0.0, 0.0, -5.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]),
+                camera: Camera::new([0.0, 0.0, -5.0], [0.0, 0.5, 0.5], [0.0, 1.0, 0.0]),
                 meshes: vec![],
             },
             event_loop,
@@ -222,6 +222,10 @@ impl GliumRender {
     ///
     pub fn add_camera(&mut self, vec_pos: [f32; 3]) {
         self.camera.add_position(vec_pos);
+    }
+
+    pub fn rotate_camera(&mut self, angles: (f32, f32)) {
+        // self.camera.rotate(angles);
     }
 
     pub fn add_mesh(&mut self, mesh: Mesh) {

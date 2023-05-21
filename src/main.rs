@@ -37,6 +37,10 @@ fn main() {
         &glium_render.display,
     ));
 
+    let mut last_x = 0_f64;
+    let mut last_y = 0_f64;
+    let mut first_move = true;
+
     event_loop.run(move |event, _, context| {
         if *context == glium::glutin::event_loop::ControlFlow::Exit {
             return;
@@ -67,6 +71,18 @@ fn main() {
 
                         glium_render.add_camera(vec_pos);
                     }
+                }
+                glium::glutin::event::WindowEvent::CursorMoved { position, .. } => {
+                    let delta_x = last_x - position.x;
+                    let delta_y = last_y - position.y;
+
+                    last_x = position.x;
+                    last_y = position.y;
+                    if first_move {
+                        first_move = false;
+                    }
+
+                    glium_render.rotate_camera((1.5_f32, 1.5_f32));
                 }
                 _ => (),
             },
