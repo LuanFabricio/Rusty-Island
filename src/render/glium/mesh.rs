@@ -1,5 +1,7 @@
 use glium::Surface;
 
+use super::GliumRender;
+
 pub struct Mesh {
     vertices: glium::VertexBuffer<super::vertex::Vertex>,
     indices: glium::IndexBuffer<u16>,
@@ -62,5 +64,52 @@ impl Mesh {
         if let Some(err) = result.err() {
             println!("Erro! {err}");
         }
+    }
+
+    pub fn from_obj(obj: &obj::Obj, display: &glium::Display) -> Self {
+        let mut vertices: Vec<super::Vertex> = vec![];
+        for obj_vertex in obj.vertices.iter() {
+            vertices.push(super::Vertex {
+                position: obj_vertex.position,
+                normal: obj_vertex.normal,
+            })
+        }
+        let vertex_buffer = glium::VertexBuffer::new(display, &vertices).unwrap();
+
+        let index_buffer = glium::IndexBuffer::new(
+            display,
+            glium::index::PrimitiveType::TrianglesList,
+            &obj.indices,
+        )
+        .unwrap();
+
+        let shader_program = glium::Program::from_source(
+            display,
+            GliumRender::create_default_vertex_shader(),
+            GliumRender::create_default_fragment_shader(),
+            None,
+        )
+        .unwrap();
+
+        Self {
+            vertices: vertex_buffer,
+            indices: index_buffer,
+            shader_program,
+            ambient: [0_f32; 3],
+            diffuse: [1_f32, 1_f32, 1_f32],
+            specular: [0_f32, 0_f32, 0.5_f32],
+            matrix: [
+                [1_f32, 0_f32, 0_f32, 0_f32],
+                [0_f32, 1_f32, 0_f32, 0_f32],
+                [0_f32, 0_f32, 1_f32, 0_f32],
+                [0_f32, 0_f32, 0_f32, 1_f32],
+            ],
+        }
+    }
+
+    pub fn set_position(&mut self, new_position: [f32; 3]) {
+        self.matrix[3][0] = new_position[0];
+        self.matrix[3][1] = new_position[1];
+        self.matrix[3][2] = new_position[2];
     }
 }
