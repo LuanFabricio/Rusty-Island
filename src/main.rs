@@ -9,7 +9,6 @@ fn main() {
 
     let hm = utils::height_map::smooth_height_map(hm);
 
-    let _sea = utils::height_map::init_height_map::<25, 25>(-1_f32);
     // println!("{hm:?}");
 
     // let shm = utils::height_map::smooth_height_map(hm);
@@ -34,6 +33,18 @@ fn main() {
     glium_render.add_mesh(render::glium::util::height_map_to_mesh(
         utils::height_map::init_height_map::<25, 25>(-1_f32),
         colors_sea,
+        &glium_render.display,
+    ));
+
+    let normal_cone_obj = render::obj_reader::ObjReader::new("assets/normal_cone.obj").unwrap();
+    let mut normal_cone_mesh =
+        render::glium::mesh::Mesh::from_obj(normal_cone_obj.get_obj(), &glium_render.display);
+    normal_cone_mesh.set_position([1_f32, 1_f32, 1_f32]);
+    glium_render.add_mesh(normal_cone_mesh);
+
+    let tree2_obj = render::obj_reader::ObjReader::new("assets/tree2.obj").unwrap();
+    glium_render.add_mesh(render::glium::mesh::Mesh::from_obj(
+        tree2_obj.get_obj(),
         &glium_render.display,
     ));
 

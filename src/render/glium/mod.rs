@@ -34,7 +34,7 @@ impl GliumRender {
         (
             Self {
                 display,
-                camera: Camera::new([0.0, 0.0, -5.0], [0.0, 0.5, 0.5], [0.0, 1.0, 0.0]),
+                camera: Camera::new([0.0, 0.0, -5.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]),
                 meshes: vec![],
             },
             event_loop,
