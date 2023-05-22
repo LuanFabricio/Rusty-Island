@@ -12,6 +12,7 @@ pub struct GliumRender {
     pub display: glium::Display,
     camera: Camera,
     meshes: Vec<Mesh>,
+    light: [f32; 3],
 }
 
 impl GliumRender {
@@ -37,8 +38,9 @@ impl GliumRender {
         (
             Self {
                 display,
-                camera: Camera::new(camera_pos, [0.0, -1.0, 0.0], [0.0, 0.0, -1.0]),
+                camera: Camera::new(camera_pos, [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]),
                 meshes: vec![],
+                light: [10_f32, 15_f32, -10_f32],
             },
             event_loop,
         )
@@ -98,7 +100,6 @@ impl GliumRender {
             },
             ..Default::default()
         };
-        let light = [0_f32, 10_f32, 0_f32];
 
         // triangle_mesh.draw(
         //     &mut frame,
@@ -113,7 +114,7 @@ impl GliumRender {
 
         // let height_map_mesh = height_map_to_mesh(height_map, &self.display);
 
-        let default_uniforms = (self.camera.get_view_matrix(), perspective, light);
+        let default_uniforms = (self.camera.get_view_matrix(), perspective, self.light);
 
         scene.draw_entities(&mut frame, default_uniforms, &params);
 
@@ -123,7 +124,7 @@ impl GliumRender {
                 &glium::uniform! {
                     view: self.camera.get_view_matrix(),
                     perspective: perspective,
-                    u_light: light,
+                    u_light: self.light,
                     matrix: mesh.matrix,
                     ambient_color: mesh.ambient,
                     diffuse_color: mesh.diffuse,

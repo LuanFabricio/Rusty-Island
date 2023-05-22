@@ -185,6 +185,15 @@ pub fn cross_vec3(v1: [f32; 3], v2: [f32; 3]) -> [f32; 3] {
     ]
 }
 
+pub fn rotate_y_matrix<const N: usize>(matrix: &mut [[f32; N]; N], angle: f32) {
+    let radians = angle.to_radians();
+
+    matrix[0][0] = radians.cos() as f32;
+    matrix[0][2] = radians.sin() as f32;
+    matrix[2][0] = -radians.sin() as f32;
+    matrix[2][2] = radians.cos() as f32;
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

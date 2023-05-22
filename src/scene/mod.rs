@@ -22,8 +22,8 @@ pub struct Scene<const W: usize, const H: usize> {
 
 impl<const W: usize, const H: usize> Scene<W, H> {
     pub fn new(display: &glium::Display) -> Self {
-        let mut height_map = init_height_map::<W, H>(-1_f32);
-        create_land(&mut height_map, 125);
+        let mut height_map = init_height_map::<W, H>(-2_f32);
+        create_land(&mut height_map, (W as f32 * H as f32 * 0.75_f32) as usize);
 
         Self {
             width: W,
@@ -38,12 +38,13 @@ impl<const W: usize, const H: usize> Scene<W, H> {
     fn load_mesh_map(display: &glium::Display) -> MeshMap {
         let plant1_obj = obj_reader::ObjReader::new("assets/plant1.obj").unwrap();
         let plant2_obj = obj_reader::ObjReader::new("assets/plant2.obj").unwrap();
+        let animal1_obj = obj_reader::ObjReader::new("assets/animal1.obj").unwrap();
 
         MeshMap {
             plant1: Mesh::from_obj(plant1_obj.get_obj(), display),
             plant2: Mesh::from_obj(plant2_obj.get_obj(), display),
-            animal1: Mesh::from_obj(plant1_obj.get_obj(), display),
-            animal2: Mesh::from_obj(plant2_obj.get_obj(), display),
+            animal1: Mesh::from_obj(animal1_obj.get_obj(), display),
+            animal2: Mesh::from_obj(animal1_obj.get_obj(), display),
         }
     }
 
@@ -77,7 +78,7 @@ impl<const W: usize, const H: usize> Scene<W, H> {
 
     pub fn get_height_map_mesh(&self, display: &glium::Display) -> Mesh {
         let mesh_colors = (
-            [0_f32, 0_f32, 0_f32],
+            [0.25_f32, 0.25_f32, 0.25_f32],
             [1_f32, 0_f32, 0_f32],
             [0_f32, 0_f32, 0_f32],
         );
@@ -117,6 +118,9 @@ impl<const W: usize, const H: usize> Scene<W, H> {
             };
 
             mesh.set_position(animal.position);
+            // BUG: Dont rotates properly.
+            mesh.set_rotation_y(animal.rotation);
+
             mesh.draw(
                 frame,
                 &glium::uniform! {

@@ -7,6 +7,12 @@ mod test;
 pub mod tree_entity;
 
 #[derive(Clone, Copy, PartialEq, Debug)]
+pub enum EntityMode {
+    Idle,
+    Walking { target: (f32, f32) },
+}
+
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum EntityType {
     Animal1,
     Animal2,
@@ -17,8 +23,9 @@ pub enum EntityType {
 #[derive(Clone, Copy, Debug)]
 pub struct Entity {
     pub position: [f32; 3],
-    rotation: f32,
+    pub rotation: f32,
     entity_type: EntityType,
+    entity_mode: EntityMode,
 }
 
 impl Entity {
@@ -27,6 +34,7 @@ impl Entity {
             position,
             rotation: 0_f32,
             entity_type,
+            entity_mode: EntityMode::Idle,
         }
     }
 
@@ -44,21 +52,24 @@ impl Entity {
         tree_plants: &TreeEntity,
         animals: &Vec<Entity>,
     ) {
-        if self.entity_type == EntityType::Plant1 || self.entity_type == EntityType::Plant2 {
+        if self.entity_type == EntityType::Plant1
+            || self.entity_type == EntityType::Plant2
+            || self.entity_mode != EntityMode::Idle
+        {
             return;
         }
 
         let current_x = self.position[0] as isize;
         let current_z = self.position[2] as isize;
         let possible_position = vec![
+            (current_x + 1, current_z),
+            (current_x + 1, current_z + 1),
+            (current_x, current_z + 1),
+            (current_x - 1, current_z + 1),
+            (current_x - 1, current_z),
             (current_x - 1, current_z - 1),
             (current_x, current_z - 1),
             (current_x + 1, current_z - 1),
-            (current_x - 1, current_z),
-            (current_x + 1, current_z),
-            (current_x - 1, current_z + 1),
-            (current_x, current_z + 1),
-            (current_x + 1, current_z + 1),
         ];
         let valid_positions =
             Self::get_valid_position(&possible_position, height_map, tree_plants, animals);

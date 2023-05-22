@@ -6,23 +6,26 @@ O projeto deve ter: <br>
   - [X] Geração aleatória de lagos na ilha.
   - [ ] Implementar cena.
     - [X] Exibir height map.
-    - [ ] Armazenar height map.
-    - [ ] Exibir modelos 3D.
-    - [ ] Armazenar animais.
+    - [X] Armazenar height map.
+    - [X] Exibir modelos 3D.
+    - [X] Armazenar animais.
     - [ ] Armazenar plantas.
-  - [ ] Adicionar leitura de modelos 3D.
+  - [X] Adicionar leitura de modelos 3D.
   - [ ] Exibir dois tipos de animais terrestres.
     - [ ] Todos os animais devem ter um modelo 3D.
-    - [ ] Todos os animais devem poder se movimentar com o tempo.
-      - [ ] Os animais devem rotacionar para onde estão se movimentando.
-    - [ ] Todos os animais devem ter uma colisão.
-    - [ ] Todos os animais não devem atravessar o chão.
-  - [ ] Exibir dois tipos de plantar.
-    - [ ] Todos as plantas devem ter um modelo 3D.
-    - [ ] Todos as plantas devem ter uma colisão.
-    - [ ] Todos as plantas não devem atravessar o chão.
-  - [ ] Adicionar luz para a cena.
-  - [ ] Adicionar shading para a cena.
+    - [X] Todos os animais devem poder se movimentar com o tempo.
+      - [ ] (Opcional) Utilizar automato para movimento.
+        - Utilizando o automato para deifinir um ponto final.
+        - Mover animal aos poucos até o ponto final.
+      - [X] Os animais devem rotacionar para onde estão se movimentando.
+    - [X] Todos os animais devem ter uma colisão.
+    - [X] Todos os animais não devem atravessar o chão.
+  - [ ] Exibir dois tipos de plantas.
+    - [ ] Todas as plantas devem ter um modelo 3D.
+    - [X] Todas as plantas devem ter uma colisão.
+    - [X] Todas as plantas não devem atravessar o chão.
+  - [X] Adicionar luz para a cena.
+  - [X] Adicionar shading para a cena.
   - [ ] Implementar controle de câmera.
     - [ ] Adicionar movimentação da câmera.
     - [ ] Adicionar rotação na câmera.
