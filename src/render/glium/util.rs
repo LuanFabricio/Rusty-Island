@@ -47,7 +47,7 @@ pub fn height_map_to_mesh<const W: usize, const H: usize>(
 
     for i in 0..W {
         for j in 0..H {
-            let pos = [i as f32, j as f32, height_map[i][j]];
+            let pos = [i as f32, height_map[i][j], j as f32];
             let normal = get_normal(&height_map, i, j);
 
             vertex_array.push(super::Vertex {
