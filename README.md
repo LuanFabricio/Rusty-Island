@@ -4,12 +4,12 @@ O projeto deve ter: <br>
   - [X] Geração aleatória de terreno (ilha).
     - [X] Adicionar height map para geração de terreno.
   - [X] Geração aleatória de lagos na ilha.
-  - [ ] Implementar cena.
+  - [X] Implementar cena.
     - [X] Exibir height map.
     - [X] Armazenar height map.
     - [X] Exibir modelos 3D.
     - [X] Armazenar animais.
-    - [ ] Armazenar plantas.
+    - [X] Armazenar plantas.
   - [X] Adicionar leitura de modelos 3D.
   - [ ] Exibir dois tipos de animais terrestres.
     - [ ] Todos os animais devem ter um modelo 3D.

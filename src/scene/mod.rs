@@ -6,6 +6,7 @@ mod test;
 use crate::render::glium::mesh::Mesh;
 use crate::render::obj_reader;
 use crate::utils::height_map::{create_land, init_height_map, smooth_height_map};
+use rand::Rng;
 
 pub use entity::{Entity, EntityType};
 
@@ -46,6 +47,45 @@ impl<const W: usize, const H: usize> Scene<W, H> {
             animal1: Mesh::from_obj(animal1_obj.get_obj(), display),
             animal2: Mesh::from_obj(animal1_obj.get_obj(), display),
         }
+    }
+
+    pub fn create_entities(&mut self, quantity: usize, entity_type: EntityType) {
+        for _ in 0..quantity {
+            let (x, z) = self.get_avaliable_position();
+
+            self.add_entity(Entity::new([x as f32, 0_f32, z as f32], entity_type));
+        }
+    }
+
+    fn get_avaliable_position(&self) -> (usize, usize) {
+        let mut rand = rand::thread_rng();
+
+        let mut x = rand.gen_range(0..self.width);
+        let mut z = rand.gen_range(0..self.height);
+
+        while self.height_map[x][z] < crate::utils::height_map::LAND_VALUE && !self.collides((x, z))
+        {
+            x = rand.gen_range(0..self.width);
+            z = rand.gen_range(0..self.height);
+        }
+
+        (x, z)
+    }
+
+    fn collides(&self, (x, z): (usize, usize)) -> bool {
+        if let Some(plants) = &self.plants {
+            if plants.collide([x as f32, 0_f32, z as f32]) {
+                return true;
+            }
+        }
+
+        for animal in self.animals.iter() {
+            if animal.position[0] == x as f32 && animal.position[2] == z as f32 {
+                return true;
+            }
+        }
+
+        false
     }
 
     pub fn add_entity(&mut self, mut entity: Entity) {

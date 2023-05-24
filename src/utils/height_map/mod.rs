@@ -3,7 +3,7 @@ use rand::{rngs::ThreadRng, Rng};
 #[cfg(test)]
 mod test;
 
-const LAND_VALUE: f32 = 1_f32;
+pub const LAND_VALUE: f32 = 1_f32;
 const LAKE_VALUE: f32 = 0_f32;
 const SEA_VALUE: f32 = -1_f32;
 
