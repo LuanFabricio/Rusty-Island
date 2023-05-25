@@ -195,14 +195,6 @@ impl GliumRender {
         "#
     }
 
-    pub fn create_shader_program(
-        &self,
-        vertex_shader: &str,
-        fragment_shader: &str,
-    ) -> Result<glium::Program, glium::ProgramCreationError> {
-        glium::Program::from_source(&self.display, vertex_shader, fragment_shader, None)
-    }
-
     /// Function to calculate the perspective matrix (for the scene).
     ///
     /// # Arguments

@@ -1,7 +1,11 @@
-use crate::{render::glium::mesh::Mesh, scene::mesh_map::MeshMap};
+#[cfg(test)]
+mod test;
+
+use crate::scene::mesh_map::MeshMap;
 
 use super::{Entity, EntityType};
 
+#[derive(Debug, PartialEq)]
 pub struct TreeEntity {
     pub key: Entity,
     leafs: [Option<Box<TreeEntity>>; 4],

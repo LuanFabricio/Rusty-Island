@@ -20,10 +20,11 @@ pub enum EntityType {
     Plant2,
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Entity {
     pub position: [f32; 3],
     pub rotation: f32,
+    speed: f32,
     entity_type: EntityType,
     entity_mode: EntityMode,
 }
@@ -33,6 +34,7 @@ impl Entity {
         Self {
             position,
             rotation: 0_f32,
+            speed: 0.5_f32,
             entity_type,
             entity_mode: EntityMode::Idle,
         }
@@ -46,47 +48,75 @@ impl Entity {
         self.rotation = angle;
     }
 
-    pub fn walk<const W: usize, const H: usize>(
+    pub fn change_mode<const W: usize, const H: usize>(
         &mut self,
         height_map: &[[f32; H]; W],
         tree_plants: &TreeEntity,
         animals: &Vec<Entity>,
     ) {
+        if self.entity_type == EntityType::Plant1 || self.entity_type == EntityType::Plant2 {
+            return;
+        }
+
+        if self.entity_mode == EntityMode::Idle {
+            let current_x = self.position[0] as isize;
+            let current_z = self.position[2] as isize;
+            let possible_position = vec![
+                (current_x + 1, current_z),
+                (current_x + 1, current_z + 1),
+                (current_x, current_z + 1),
+                (current_x - 1, current_z + 1),
+                (current_x - 1, current_z),
+                (current_x - 1, current_z - 1),
+                (current_x, current_z - 1),
+                (current_x + 1, current_z - 1),
+            ];
+            let valid_positions =
+                Self::get_valid_position(&possible_position, height_map, tree_plants, animals);
+
+            if valid_positions.len() == 0 {
+                return;
+            }
+
+            let mut rand = rand::thread_rng();
+            let index = rand.gen_range(0..valid_positions.len());
+
+            let position_index = valid_positions[index];
+            let x = possible_position[position_index].0 as f32;
+            let z = possible_position[position_index].1 as f32;
+
+            self.entity_mode = EntityMode::Walking { target: (x, z) };
+            self.set_rotation(position_index as f32 * 45_f32);
+        } else {
+            self.walk();
+        }
+    }
+
+    pub fn walk(&mut self) {
         if self.entity_type == EntityType::Plant1
             || self.entity_type == EntityType::Plant2
-            || self.entity_mode != EntityMode::Idle
+            || self.entity_mode == EntityMode::Idle
         {
             return;
         }
 
-        let current_x = self.position[0] as isize;
-        let current_z = self.position[2] as isize;
-        let possible_position = vec![
-            (current_x + 1, current_z),
-            (current_x + 1, current_z + 1),
-            (current_x, current_z + 1),
-            (current_x - 1, current_z + 1),
-            (current_x - 1, current_z),
-            (current_x - 1, current_z - 1),
-            (current_x, current_z - 1),
-            (current_x + 1, current_z - 1),
-        ];
-        let valid_positions =
-            Self::get_valid_position(&possible_position, height_map, tree_plants, animals);
+        let (target_x, target_z) = match self.entity_mode {
+            EntityMode::Walking { target } => target,
+            _ => return,
+        };
 
-        if valid_positions.len() == 0 {
+        let (signal_x, signal_z) = (
+            (target_x - self.position[0]).signum(),
+            (target_z - self.position[2]).signum(),
+        );
+
+        if self.position[0] == target_x && self.position[2] == target_z {
+            self.entity_mode = EntityMode::Idle;
             return;
         }
 
-        let mut rand = rand::thread_rng();
-        let index = rand.gen_range(0..valid_positions.len());
-
-        let position_index = valid_positions[index];
-        let x = possible_position[position_index].0 as usize;
-        let z = possible_position[position_index].1 as usize;
-
-        self.position = [x as f32, height_map[x][z], z as f32];
-        self.set_rotation(position_index as f32 * 45_f32);
+        self.position[0] += self.speed * signal_x;
+        self.position[2] += self.speed * signal_z;
     }
 
     fn get_valid_position<const W: usize, const H: usize>(

@@ -136,7 +136,7 @@ impl<const W: usize, const H: usize> Scene<W, H> {
         let animals = self.animals.clone();
 
         for animal in self.animals.iter_mut() {
-            animal.walk(&self.height_map, plants, &animals);
+            animal.change_mode(&self.height_map, plants, &animals);
         }
     }
 

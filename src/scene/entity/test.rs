@@ -215,3 +215,72 @@ mod have_another_animal {
         assert_eq!(Entity::have_another_animal(position, &animals), false);
     }
 }
+
+mod change_mode {
+    use super::*;
+
+    #[test]
+    fn should_not_update_plant_mode() {
+        let mut plant1 = Entity::new([0_f32; 3], EntityType::Plant1);
+        let mut plant2 = Entity::new([1_f32; 3], EntityType::Plant2);
+
+        let height_map = [[1_f32; 25]; 25];
+        let tree_plants = TreeEntity::new(Entity::new([2_f32; 3], EntityType::Plant1));
+        let animals = Vec::<Entity>::new();
+
+        plant1.change_mode(&height_map, &tree_plants, &animals);
+        assert_eq!(plant1.entity_mode, EntityMode::Idle);
+
+        plant2.change_mode(&height_map, &tree_plants, &animals);
+        assert_eq!(plant2.entity_mode, EntityMode::Idle);
+    }
+
+    #[test]
+    fn should_update_idle_animals_mode() {
+        let mut animal = Entity::new([0_f32; 3], EntityType::Animal1);
+
+        let height_map = [[1_f32; 25]; 25];
+        let tree_plants = TreeEntity::new(Entity::new([2_f32; 3], EntityType::Plant1));
+        let animals = Vec::<Entity>::new();
+
+        animal.change_mode(&height_map, &tree_plants, &animals);
+
+        assert_ne!(animal.entity_mode, EntityMode::Idle);
+    }
+
+    #[test]
+    fn should_move_animals_position_when_walking() {
+        const INITIAL_POSITION: [f32; 3] = [0_f32; 3];
+        let mut animal = Entity::new(INITIAL_POSITION, EntityType::Animal1);
+        animal.entity_mode = EntityMode::Walking {
+            target: (1_f32, 1_f32),
+        };
+
+        let height_map = [[1_f32; 25]; 25];
+        let tree_plants = TreeEntity::new(Entity::new([2_f32; 3], EntityType::Plant1));
+        let animals = Vec::<Entity>::new();
+
+        animal.change_mode(&height_map, &tree_plants, &animals);
+
+        assert_ne!(animal.entity_mode, EntityMode::Idle);
+        assert_ne!(animal.position, INITIAL_POSITION);
+    }
+
+    #[test]
+    fn should_be_idle_if_the_target_is_actived() {
+        const INITIAL_POSITION: [f32; 3] = [0_f32; 3];
+        let mut animal = Entity::new(INITIAL_POSITION, EntityType::Animal1);
+        animal.entity_mode = EntityMode::Walking {
+            target: (INITIAL_POSITION[0], INITIAL_POSITION[2]),
+        };
+
+        let height_map = [[1_f32; 25]; 25];
+        let tree_plants = TreeEntity::new(Entity::new([2_f32; 3], EntityType::Plant1));
+        let animals = Vec::<Entity>::new();
+
+        animal.change_mode(&height_map, &tree_plants, &animals);
+
+        assert_eq!(animal.entity_mode, EntityMode::Idle);
+        assert_eq!(animal.position, INITIAL_POSITION);
+    }
+}

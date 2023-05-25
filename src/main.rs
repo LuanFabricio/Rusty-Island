@@ -12,29 +12,11 @@ fn main() {
 
     let mut scene = scene::Scene::<ISLAND_WIDTH, ISLAND_HEIGHT>::new(&glium_render.display);
 
-    // scene.add_entity(scene::Entity::new(
-    //     [12_f32, 5_f32, 12_f32],
-    //     scene::EntityType::Plant1,
-    // ));
-    // scene.add_entity(scene::Entity::new(
-    //     [24_f32, 5_f32, 24_f32],
-    //     scene::EntityType::Plant1,
-    // ));
+    scene.create_entities(5, scene::EntityType::Animal1);
+    scene.create_entities(5, scene::EntityType::Animal2);
 
-    // scene.add_entity(scene::Entity::new(
-    //     [
-    //         ISLAND_WIDTH as f32 / 2_f32,
-    //         5_f32,
-    //         ISLAND_HEIGHT as f32 / 2_f32,
-    //     ],
-    //     scene::EntityType::Animal1,
-    // ));
-
-    scene.create_entities(10, scene::EntityType::Animal1);
-    scene.create_entities(10, scene::EntityType::Animal2);
-
-    scene.create_entities(65, scene::EntityType::Plant1);
-    scene.create_entities(65, scene::EntityType::Plant2);
+    scene.create_entities(45, scene::EntityType::Plant1);
+    scene.create_entities(45, scene::EntityType::Plant2);
 
     glium_render.add_mesh(scene.get_height_map_mesh(&glium_render.display));
 
