@@ -14,14 +14,15 @@ O projeto deve ter: <br>
   - [ ] Exibir dois tipos de animais terrestres.
     - [ ] Todos os animais devem ter um modelo 3D.
     - [X] Todos os animais devem poder se movimentar com o tempo.
-      - [ ] (Opcional) Utilizar automato para movimento.
+      - [X] (Opcional) Utilizar automato para movimento.
         - Utilizando o automato para deifinir um ponto final.
         - Mover animal aos poucos até o ponto final.
       - [X] Os animais devem rotacionar para onde estão se movimentando.
     - [X] Todos os animais devem ter uma colisão.
     - [X] Todos os animais não devem atravessar o chão.
-  - [ ] Exibir dois tipos de plantas.
-    - [ ] Todas as plantas devem ter um modelo 3D.
+  - [X] Exibir dois tipos de plantas.
+    - [X] Todas as plantas devem ter um modelo 3D.
+    - [X] Adicionar uma rotação aleatória nas plantas.
     - [X] Todas as plantas devem ter uma colisão.
     - [X] Todas as plantas não devem atravessar o chão.
   - [X] Adicionar luz para a cena.

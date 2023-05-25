@@ -158,7 +158,6 @@ impl<const W: usize, const H: usize> Scene<W, H> {
             };
 
             mesh.set_position(animal.position);
-            // BUG: Dont rotates properly.
             mesh.set_rotation_y(animal.rotation);
 
             mesh.draw(

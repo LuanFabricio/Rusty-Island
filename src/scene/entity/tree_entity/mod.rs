@@ -51,6 +51,7 @@ impl TreeEntity {
         };
 
         mesh.set_position(self.key.position);
+        mesh.set_rotation_y(self.key.rotation);
         mesh.draw(
             frame,
             &glium::uniform! {

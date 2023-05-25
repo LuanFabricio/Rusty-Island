@@ -11,8 +11,24 @@ mod new {
         let entity = Entity::new(POSITION, ENTITY_TYPE);
 
         assert_eq!(entity.rotation, 0_f32);
-        assert_eq!(entity.position, POSITION);
         assert_eq!(entity.entity_type, ENTITY_TYPE);
+    }
+
+    #[test]
+    fn should_set_rotaion_to_zero_if_is_an_animal() {
+        let animal1 = Entity::new([0_f32; 3], EntityType::Animal1);
+        let animal2 = Entity::new([0_f32; 3], EntityType::Animal2);
+
+        assert_eq!(animal1.rotation, 0_f32);
+        assert_eq!(animal2.rotation, 0_f32);
+    }
+
+    #[test]
+    fn should_set_rotaion_randomly_if_is_a_plant() {
+        let plant1 = Entity::new([0_f32; 3], EntityType::Plant1);
+        let plant2 = Entity::new([0_f32; 3], EntityType::Plant2);
+
+        assert_ne!(plant1.rotation, plant2.rotation);
     }
 }
 

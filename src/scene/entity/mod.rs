@@ -31,9 +31,17 @@ pub struct Entity {
 
 impl Entity {
     pub fn new(position: [f32; 3], entity_type: EntityType) -> Self {
+        let rotation = match entity_type {
+            EntityType::Plant1 | EntityType::Plant2 => {
+                let mut rand = rand::thread_rng();
+                rand.gen_range(0_f32..360_f32)
+            }
+            _ => 0_f32,
+        };
+
         Self {
             position,
-            rotation: 0_f32,
+            rotation,
             speed: 0.5_f32,
             entity_type,
             entity_mode: EntityMode::Idle,
