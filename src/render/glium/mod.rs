@@ -12,6 +12,7 @@ pub struct GliumRender {
     pub display: glium::Display,
     camera: Camera,
     meshes: Vec<Mesh>,
+    light: [f32; 3],
 }
 
 impl GliumRender {
@@ -20,7 +21,10 @@ impl GliumRender {
     /// # Arguments
     /// * `title` - Title of the window.
     ///
-    pub fn new(title: &str) -> (Self, glium::glutin::event_loop::EventLoop<()>) {
+    pub fn new(
+        title: &str,
+        camera_pos: [f32; 3],
+    ) -> (Self, glium::glutin::event_loop::EventLoop<()>) {
         let event_loop = glium::glutin::event_loop::EventLoop::new();
 
         let wb = glium::glutin::window::WindowBuilder::new()
@@ -34,15 +38,19 @@ impl GliumRender {
         (
             Self {
                 display,
-                camera: Camera::new([0.0, 0.0, -5.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]),
+                camera: Camera::new(camera_pos, [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]),
                 meshes: vec![],
+                light: [10_f32, 15_f32, -10_f32],
             },
             event_loop,
         )
     }
 
     /// Function to draw the scene (using the meshes of the struct).
-    pub fn draw_scene(&mut self) {
+    pub fn draw_scene<const W: usize, const H: usize>(
+        &mut self,
+        scene: &mut crate::scene::Scene<W, H>,
+    ) {
         // let triangle_shape = self::teapot::VERTICES;
 
         // let triangle_normals = self::teapot::NORMALS;
@@ -81,7 +89,7 @@ impl GliumRender {
 
         let mut frame = self.display.draw();
 
-        frame.clear_color_and_depth((0_f32, 0_f32, 0_f32, 1_f32), 1.0);
+        frame.clear_color_and_depth((1_f32, 1_f32, 1_f32, 1_f32), 1.0);
 
         let perspective = GliumRender::get_perspective_matrix(&frame);
         let params = glium::DrawParameters {
@@ -92,7 +100,6 @@ impl GliumRender {
             },
             ..Default::default()
         };
-        let light = [-1.0, 0.4, 0.9_f32];
 
         // triangle_mesh.draw(
         //     &mut frame,
@@ -107,13 +114,17 @@ impl GliumRender {
 
         // let height_map_mesh = height_map_to_mesh(height_map, &self.display);
 
+        let default_uniforms = (self.camera.get_view_matrix(), perspective, self.light);
+
+        scene.draw_entities(&mut frame, default_uniforms, &params);
+
         for mesh in self.meshes.iter() {
             mesh.draw(
                 &mut frame,
                 &glium::uniform! {
                     view: self.camera.get_view_matrix(),
                     perspective: perspective,
-                    u_light: light,
+                    u_light: self.light,
                     matrix: mesh.matrix,
                     ambient_color: mesh.ambient,
                     diffuse_color: mesh.diffuse,
@@ -182,14 +193,6 @@ impl GliumRender {
                 color = vec4(ambient_color + diffuse * diffuse_color + specular * specular_color, 1.0);
             }
         "#
-    }
-
-    pub fn create_shader_program(
-        &self,
-        vertex_shader: &str,
-        fragment_shader: &str,
-    ) -> Result<glium::Program, glium::ProgramCreationError> {
-        glium::Program::from_source(&self.display, vertex_shader, fragment_shader, None)
     }
 
     /// Function to calculate the perspective matrix (for the scene).

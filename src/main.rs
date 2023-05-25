@@ -1,56 +1,36 @@
 mod render;
+mod scene;
 mod traits;
 mod utils;
 
+const ANIMALS_MOVE_DELAY: u128 = 1500;
+const ISLAND_WIDTH: usize = 120;
+const ISLAND_HEIGHT: usize = 120;
+
 fn main() {
-    let mut hm = utils::height_map::init_height_map::<25, 25>(-1_f32);
-    utils::height_map::create_land(&mut hm, 100);
-    utils::height_map::create_lakes(&mut hm, 15);
+    let (mut glium_render, event_loop) = render::glium::GliumRender::new("Ilha", [15_f32; 3]);
 
-    let hm = utils::height_map::smooth_height_map(hm);
+    let mut scene = scene::Scene::<ISLAND_WIDTH, ISLAND_HEIGHT>::new(&glium_render.display);
 
-    // println!("{hm:?}");
+    scene.create_entities(5, scene::EntityType::Animal1);
+    scene.create_entities(5, scene::EntityType::Animal2);
 
-    // let shm = utils::height_map::smooth_height_map(hm);
-    // println!("{shm:?}");
+    scene.create_entities(45, scene::EntityType::Plant1);
+    scene.create_entities(45, scene::EntityType::Plant2);
 
-    // utils::height_map::create_land(&mut hm, 150);
-    // println!("{hm:?}");
-
-    // utils::height_map::create_lakes(&mut hm, 20);
-    // utils::height_map::print_height_map(&hm);
-
-    let (mut glium_render, event_loop) = render::glium::GliumRender::new("Teste");
-
-    let colors_height_map = ([1.0, 1.0, 1.0], [0.6, 0.0, 0.0], [0.2, 0.0, 0.0]);
-    glium_render.add_mesh(render::glium::util::height_map_to_mesh(
-        hm,
-        colors_height_map,
-        &glium_render.display,
-    ));
+    glium_render.add_mesh(scene.get_height_map_mesh(&glium_render.display));
 
     let colors_sea = ([1_f32; 3], [0_f32, 0_f32, 0.6_f32], [0_f32, 0_f32, 0.2_f32]);
     glium_render.add_mesh(render::glium::util::height_map_to_mesh(
-        utils::height_map::init_height_map::<25, 25>(-1_f32),
+        utils::height_map::init_height_map::<ISLAND_WIDTH, ISLAND_HEIGHT>(-1_f32),
         colors_sea,
-        &glium_render.display,
-    ));
-
-    let normal_cone_obj = render::obj_reader::ObjReader::new("assets/normal_cone.obj").unwrap();
-    let mut normal_cone_mesh =
-        render::glium::mesh::Mesh::from_obj(normal_cone_obj.get_obj(), &glium_render.display);
-    normal_cone_mesh.set_position([1_f32, 1_f32, 1_f32]);
-    glium_render.add_mesh(normal_cone_mesh);
-
-    let tree2_obj = render::obj_reader::ObjReader::new("assets/tree2.obj").unwrap();
-    glium_render.add_mesh(render::glium::mesh::Mesh::from_obj(
-        tree2_obj.get_obj(),
         &glium_render.display,
     ));
 
     let mut last_x = 0_f64;
     let mut last_y = 0_f64;
     let mut first_move = true;
+    let mut time = std::time::SystemTime::now();
 
     event_loop.run(move |event, _, context| {
         if *context == glium::glutin::event_loop::ControlFlow::Exit {
@@ -71,12 +51,12 @@ fn main() {
                         };
 
                         let vec_pos = match key {
-                            glium::glutin::event::VirtualKeyCode::W => [0_f32, 0_f32, 1_f32],
-                            glium::glutin::event::VirtualKeyCode::S => [0_f32, 0_f32, -1_f32],
-                            glium::glutin::event::VirtualKeyCode::A => [-1_f32, 0_f32, 0_f32],
+                            glium::glutin::event::VirtualKeyCode::W => [0_f32, -1_f32, 0_f32],
+                            glium::glutin::event::VirtualKeyCode::S => [0_f32, 1_f32, 0_f32],
                             glium::glutin::event::VirtualKeyCode::D => [1_f32, 0_f32, 0_f32],
-                            glium::glutin::event::VirtualKeyCode::Space => [0_f32, 1_f32, 0_f32],
-                            glium::glutin::event::VirtualKeyCode::LShift => [0_f32, -1_f32, 0_f32],
+                            glium::glutin::event::VirtualKeyCode::A => [-1_f32, 0_f32, 0_f32],
+                            glium::glutin::event::VirtualKeyCode::Space => [0_f32, 0_f32, 1_f32],
+                            glium::glutin::event::VirtualKeyCode::LShift => [0_f32, 0_f32, -1_f32],
                             _ => [0_f32; 3],
                         };
 
@@ -100,6 +80,13 @@ fn main() {
             _ => (),
         }
 
-        glium_render.draw_scene();
+        if let Ok(delay) = std::time::SystemTime::now().duration_since(time) {
+            if delay.as_millis() >= ANIMALS_MOVE_DELAY {
+                scene.move_animals();
+                time = std::time::SystemTime::now();
+            }
+        }
+
+        glium_render.draw_scene(&mut scene);
     })
 }

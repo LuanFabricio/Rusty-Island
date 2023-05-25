@@ -1,6 +1,6 @@
 use glium::Surface;
 
-use super::GliumRender;
+use super::{util::rotate_y_matrix, GliumRender};
 
 pub struct Mesh {
     vertices: glium::VertexBuffer<super::vertex::Vertex>,
@@ -111,5 +111,9 @@ impl Mesh {
         self.matrix[3][0] = new_position[0];
         self.matrix[3][1] = new_position[1];
         self.matrix[3][2] = new_position[2];
+    }
+
+    pub fn set_rotation_y(&mut self, angle: f32) {
+        rotate_y_matrix(&mut self.matrix, angle);
     }
 }

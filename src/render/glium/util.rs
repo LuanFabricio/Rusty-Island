@@ -47,7 +47,7 @@ pub fn height_map_to_mesh<const W: usize, const H: usize>(
 
     for i in 0..W {
         for j in 0..H {
-            let pos = [i as f32, j as f32, height_map[i][j]];
+            let pos = [i as f32, height_map[i][j], j as f32];
             let normal = get_normal(&height_map, i, j);
 
             vertex_array.push(super::Vertex {
@@ -183,6 +183,15 @@ pub fn cross_vec3(v1: [f32; 3], v2: [f32; 3]) -> [f32; 3] {
         v1[2] * v2[0] - v1[0] * v2[2],
         v1[0] * v2[1] - v1[1] * v2[0],
     ]
+}
+
+pub fn rotate_y_matrix<const N: usize>(matrix: &mut [[f32; N]; N], angle: f32) {
+    let radians = angle.to_radians();
+
+    matrix[0][0] = radians.cos() as f32;
+    matrix[0][2] = radians.sin() as f32;
+    matrix[2][0] = -radians.sin() as f32;
+    matrix[2][2] = radians.cos() as f32;
 }
 
 #[cfg(test)]
