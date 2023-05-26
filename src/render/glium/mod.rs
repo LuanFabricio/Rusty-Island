@@ -228,7 +228,7 @@ impl GliumRender {
     }
 
     pub fn rotate_camera(&mut self, angles: (f32, f32)) {
-        // self.camera.rotate(angles);
+        self.camera.rotate(angles);
     }
 
     pub fn add_mesh(&mut self, mesh: Mesh) {

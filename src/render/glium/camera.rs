@@ -1,8 +1,8 @@
 use super::util::{cross_vec3, normalize};
 
-const DEFAULT_DIRECTION: [f32; 3] = [0_f32, 0_f32, 1_f32];
-const DEFAULT_RIGHT: [f32; 3] = [-1_f32, 0_f32, 0_f32];
-const DEFAULT_UP: [f32; 3] = [0_f32, 1_f32, 0_f32];
+static mut DEFAULT_DIRECTION: [f32; 3] = [0_f32, -1_f32, 0_f32];
+static mut DEFAULT_RIGHT: [f32; 3] = [0_f32, 0_f32, 1_f32];
+static mut DEFAULT_UP: [f32; 3] = [-1_f32, 0_f32, 1_f32];
 
 pub struct Camera {
     position: [f32; 3],
@@ -22,13 +22,19 @@ impl Camera {
     /// * `up` - Up vector for the camera.
     ///
     pub fn new(position: [f32; 3], direction: [f32; 3], up: [f32; 3]) -> Self {
-        Self {
-            position,
-            direction,
-            right: cross_vec3(direction, up),
-            up,
-            rotation_x: 0_f32,
-            rotation_y: 0_f32,
+        unsafe {
+            DEFAULT_DIRECTION = direction;
+            DEFAULT_UP = up;
+            DEFAULT_RIGHT = cross_vec3(direction, up);
+
+            Self {
+                position,
+                direction,
+                right: DEFAULT_RIGHT,
+                up,
+                rotation_x: 0_f32,
+                rotation_y: 0_f32,
+            }
         }
     }
 
@@ -81,7 +87,6 @@ impl Camera {
     }
 
     pub fn rotate(&mut self, rotation: (f32, f32)) {
-        // FIX: Rotation not working.
         self.rotation_x = self.rotation_x + rotation.0;
         self.rotation_y = self.rotation_y + rotation.1;
 
@@ -91,24 +96,32 @@ impl Camera {
     }
 
     fn rotate_up(&mut self) {
-        let radians = self.rotation_y * std::f32::consts::PI / 180_f32;
+        let radians = self.rotation_y.to_radians();
 
-        self.up[1] = self.up[1] * radians.cos() - self.up[2] * radians.sin();
-        self.up[2] = self.up[2] * radians.sin() + self.up[2] * radians.cos();
+        unsafe {
+            self.up[1] = DEFAULT_UP[1] * radians.cos() - DEFAULT_UP[2] * radians.sin();
+            self.up[2] = DEFAULT_UP[1] * radians.sin() + DEFAULT_UP[2] * radians.cos();
+        }
 
         self.up = normalize(self.up);
     }
 
     fn rotate_right(&mut self) {
-        let radians = self.rotation_x * std::f32::consts::PI / 180_f32;
+        let radians = self.rotation_x.to_radians();
 
-        self.right[0] = self.right[0] * radians.cos() - self.right[1] * radians.sin();
-        self.right[1] = -self.right[0] * radians.sin() + self.right[1] * radians.cos();
+        unsafe {
+            self.right[0] = DEFAULT_RIGHT[0] * radians.cos() - DEFAULT_RIGHT[1] * radians.sin();
+            self.right[1] = -DEFAULT_RIGHT[0] * radians.sin() + DEFAULT_RIGHT[1] * radians.cos();
+        }
 
         self.right = normalize(self.right);
     }
 
     fn rotate_direction(&mut self) {
+        println!("cross {:?}", cross_vec3(self.up, self.right));
         self.direction = normalize(cross_vec3(self.up, self.right));
+        println!("direction: {:?}", self.direction);
+        println!("right: {:?}", self.right);
+        println!("up: {:?}", self.up);
     }
 }
