@@ -223,8 +223,8 @@ impl GliumRender {
     /// # Arguments
     /// * `vec_pos` - Vector to move the camera (adding).
     ///
-    pub fn add_camera(&mut self, vec_pos: [f32; 3]) {
-        self.camera.add_position(vec_pos);
+    pub fn walk(&mut self, direction: camera::WalkDirection) {
+        self.camera.walk(direction);
     }
 
     pub fn rotate_camera(&mut self, angles: (f32, f32)) {

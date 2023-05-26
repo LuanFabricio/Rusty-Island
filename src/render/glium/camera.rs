@@ -4,6 +4,15 @@ static mut DEFAULT_DIRECTION: [f32; 3] = [0_f32, -1_f32, 0_f32];
 static mut DEFAULT_RIGHT: [f32; 3] = [0_f32, 0_f32, 1_f32];
 static mut DEFAULT_UP: [f32; 3] = [-1_f32, 0_f32, 1_f32];
 
+pub enum WalkDirection {
+    Front,
+    Back,
+    Left,
+    Right,
+    Up,
+    Down,
+}
+
 pub struct Camera {
     position: [f32; 3],
     direction: [f32; 3],
@@ -85,6 +94,38 @@ impl Camera {
         self.position[1] += vec_pos[1];
         self.position[2] += vec_pos[2];
     }
+
+    pub fn walk(&mut self, direction: WalkDirection) {
+        let vec_pos = match direction {
+            WalkDirection::Front => self.direction,
+            WalkDirection::Back => {
+                [
+                    -self.direction[0],
+                    -self.direction[1],
+                    -self.direction[2],
+                ]
+            },
+            WalkDirection::Left => {
+                [
+                    -self.right[0],
+                    -self.right[1],
+                    -self.right[2],
+                ]
+            },
+            WalkDirection::Right => self.right,
+            WalkDirection::Up => self.up,
+            WalkDirection::Down => {
+                [
+                    -self.up[0],
+                    -self.up[1],
+                    -self.up[2],
+                ]
+            }
+        };
+
+        self.add_position(vec_pos);
+    }
+
 
     pub fn rotate(&mut self, rotation: (f32, f32)) {
         self.rotation_x = self.rotation_x + rotation.0;

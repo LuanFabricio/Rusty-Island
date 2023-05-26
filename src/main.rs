@@ -52,13 +52,13 @@ fn main() {
                             None => return,
                         };
 
-                        let vec_pos = match key {
-                            glium::glutin::event::VirtualKeyCode::W => [0_f32, -1_f32, 0_f32],
-                            glium::glutin::event::VirtualKeyCode::S => [0_f32, 1_f32, 0_f32],
-                            glium::glutin::event::VirtualKeyCode::D => [1_f32, 0_f32, 0_f32],
-                            glium::glutin::event::VirtualKeyCode::A => [-1_f32, 0_f32, 0_f32],
-                            glium::glutin::event::VirtualKeyCode::Space => [0_f32, 0_f32, 1_f32],
-                            glium::glutin::event::VirtualKeyCode::LShift => [0_f32, 0_f32, -1_f32],
+                        let direction = match key {
+                            glium::glutin::event::VirtualKeyCode::W => render::glium::camera::WalkDirection::Front,
+                            glium::glutin::event::VirtualKeyCode::S => render::glium::camera::WalkDirection::Back,
+                            glium::glutin::event::VirtualKeyCode::D => render::glium::camera::WalkDirection::Left,
+                            glium::glutin::event::VirtualKeyCode::A => render::glium::camera::WalkDirection::Right,
+                            glium::glutin::event::VirtualKeyCode::Space => render::glium::camera::WalkDirection::Up,
+                            glium::glutin::event::VirtualKeyCode::LShift => render::glium::camera::WalkDirection::Down,
                             glium::glutin::event::VirtualKeyCode::Up => {
                                 glium_render.rotate_camera((0_f32, -1.5_f32));
                                 return;
@@ -75,10 +75,10 @@ fn main() {
                                 glium_render.rotate_camera((1.5_f32, 0_f32));
                                 return;
                             }
-                            _ => [0_f32; 3],
+                            _ => return,
                         };
 
-                        glium_render.add_camera(vec_pos);
+                        glium_render.walk(direction);
                     }
                 }
                 glium::glutin::event::WindowEvent::CursorMoved { position, .. } => {
