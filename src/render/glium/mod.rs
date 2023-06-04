@@ -51,47 +51,11 @@ impl GliumRender {
         &mut self,
         scene: &mut crate::scene::Scene<W, H>,
     ) {
-        // let triangle_shape = self::teapot::VERTICES;
-
-        // let triangle_normals = self::teapot::NORMALS;
-
-        // let triangle_vertex_buffer =
-        //     glium::VertexBuffer::new(&self.display, &triangle_shape).unwrap();
-        // let triangle_normals_buffer =
-        //     glium::VertexBuffer::new(&self.display, &triangle_normals).unwrap();
-
-        // let indices = glium::IndexBuffer::new(
-        //     &self.display,
-        //     glium::index::PrimitiveType::TrianglesList,
-        //     &self::teapot::INDICES,
-        // )
-        // .unwrap();
-
-        // let vertex_shader_src = GliumRender::create_default_vertex_shader();
-
-        // let fragment_shader_src = GliumRender::create_default_fragment_shader();
-
-        // let shader_program = self
-        //     .create_shader_program(vertex_shader_src, fragment_shader_src)
-        //     .unwrap();
-
-        // let triangle_mesh = Mesh::new(
-        //     triangle_vertex_buffer,
-        //     indices,
-        //     shader_program,
-        //     [
-        //         [0.01, 0.0, 0.0, 0.0],
-        //         [0.0, 0.01, 0.0, 0.0],
-        //         [0.0, 0.0, 0.01, 0.0],
-        //         [0.0, 0.0, 2.0, 1.0_f32],
-        //     ],
-        // );
-
         let mut frame = self.display.draw();
 
         frame.clear_color_and_depth((1_f32, 1_f32, 1_f32, 1_f32), 1.0);
 
-        let perspective = GliumRender::get_perspective_matrix(&frame);
+        let perspective = self.get_perspective_matrix(&frame);
         let params = glium::DrawParameters {
             depth: glium::Depth {
                 test: glium::draw_parameters::DepthTest::IfLess,
@@ -100,19 +64,6 @@ impl GliumRender {
             },
             ..Default::default()
         };
-
-        // triangle_mesh.draw(
-        //     &mut frame,
-        //     &glium::uniform! {
-        //         view: self.camera.get_view_matrix(),
-        //         matrix: triangle_mesh.matrix,
-        //         perspective: perspective,
-        //         u_light: light,
-        //     },
-        //     &params,
-        // );
-
-        // let height_map_mesh = height_map_to_mesh(height_map, &self.display);
 
         let default_uniforms = (self.camera.get_view_matrix(), perspective, self.light);
 
@@ -180,16 +131,10 @@ impl GliumRender {
             void main() {
                 float diffuse = max(dot(normalize(v_normal), normalize(u_light)), 0.0);
 
-                // float brightness = dot(normalize(v_normal), normalize(u_light));
-
-                // vec3 dark_color = vec3(0.6, 0.0, 0.0);
-                // vec3 regular_color = vec3(1.0, 0.0, 0.0);
-
                 vec3 camera_dir = normalize(-v_position);
                 vec3 half_direction = normalize(normalize(u_light) + camera_dir);
                 float specular = pow(max(dot(half_direction, normalize(v_normal)), 0.0), 16.0);
 
-                // color = vec4(mix(dark_color, regular_color, brightness), 1.0);
                 color = vec4(ambient_color + diffuse * diffuse_color + specular * specular_color, 1.0);
             }
         "#
@@ -200,11 +145,11 @@ impl GliumRender {
     /// # Arguments
     /// * `frame` - Frame that will be used to draw.
     ///
-    fn get_perspective_matrix(frame: &glium::Frame) -> [[f32; 4]; 4] {
+    fn get_perspective_matrix(&self, frame: &glium::Frame) -> [[f32; 4]; 4] {
         let (width, height) = frame.get_dimensions();
         let aspect_ratio = height as f32 / width as f32;
 
-        let fov: f32 = 3.141592 / 3.0;
+        let fov: f32 = self.camera.get_fov().to_radians();
         let zfar = 1024.0;
         let znear = 0.1;
 
@@ -233,5 +178,13 @@ impl GliumRender {
 
     pub fn add_mesh(&mut self, mesh: Mesh) {
         self.meshes.push(mesh);
+    }
+
+    pub fn zoom_in(&mut self) {
+        self.camera.zoom_in();
+    }
+
+    pub fn zoom_out(&mut self) {
+        self.camera.zoom_out();
     }
 }

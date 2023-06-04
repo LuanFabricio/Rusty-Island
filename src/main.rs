@@ -53,12 +53,24 @@ fn main() {
                         };
 
                         let direction = match key {
-                            glium::glutin::event::VirtualKeyCode::W => render::glium::camera::WalkDirection::Front,
-                            glium::glutin::event::VirtualKeyCode::S => render::glium::camera::WalkDirection::Back,
-                            glium::glutin::event::VirtualKeyCode::D => render::glium::camera::WalkDirection::Left,
-                            glium::glutin::event::VirtualKeyCode::A => render::glium::camera::WalkDirection::Right,
-                            glium::glutin::event::VirtualKeyCode::Space => render::glium::camera::WalkDirection::Up,
-                            glium::glutin::event::VirtualKeyCode::LShift => render::glium::camera::WalkDirection::Down,
+                            glium::glutin::event::VirtualKeyCode::W => {
+                                render::glium::camera::WalkDirection::Front
+                            }
+                            glium::glutin::event::VirtualKeyCode::S => {
+                                render::glium::camera::WalkDirection::Back
+                            }
+                            glium::glutin::event::VirtualKeyCode::D => {
+                                render::glium::camera::WalkDirection::Left
+                            }
+                            glium::glutin::event::VirtualKeyCode::A => {
+                                render::glium::camera::WalkDirection::Right
+                            }
+                            glium::glutin::event::VirtualKeyCode::Space => {
+                                render::glium::camera::WalkDirection::Up
+                            }
+                            glium::glutin::event::VirtualKeyCode::LShift => {
+                                render::glium::camera::WalkDirection::Down
+                            }
                             glium::glutin::event::VirtualKeyCode::Up => {
                                 glium_render.rotate_camera((0_f32, -1.5_f32));
                                 return;
@@ -73,6 +85,14 @@ fn main() {
                             }
                             glium::glutin::event::VirtualKeyCode::Left => {
                                 glium_render.rotate_camera((1.5_f32, 0_f32));
+                                return;
+                            }
+                            glium::glutin::event::VirtualKeyCode::Minus => {
+                                glium_render.zoom_out();
+                                return;
+                            }
+                            glium::glutin::event::VirtualKeyCode::Equals => {
+                                glium_render.zoom_in();
                                 return;
                             }
                             _ => return,
