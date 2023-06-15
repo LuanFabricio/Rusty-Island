@@ -11,8 +11,8 @@ O projeto deve ter: <br>
     - [X] Armazenar animais.
     - [X] Armazenar plantas.
   - [X] Adicionar leitura de modelos 3D.
-  - [ ] Exibir dois tipos de animais terrestres.
-    - [ ] Todos os animais devem ter um modelo 3D.
+  - [X] Exibir dois tipos de animais terrestres.
+    - [X] Todos os animais devem ter um modelo 3D.
     - [X] Todos os animais devem poder se movimentar com o tempo.
       - [X] (Opcional) Utilizar automato para movimento.
         - Utilizando o automato para deifinir um ponto final.
@@ -27,7 +27,7 @@ O projeto deve ter: <br>
     - [X] Todas as plantas não devem atravessar o chão.
   - [X] Adicionar luz para a cena.
   - [X] Adicionar shading para a cena.
-  - [ ] Implementar controle de câmera.
-    - [ ] Adicionar movimentação da câmera.
-    - [ ] Adicionar rotação na câmera.
-    - [ ] Adicionar zoom na câmera.
+  - [X] Implementar controle de câmera.
+    - [X] Adicionar movimentação da câmera.
+    - [X] Adicionar rotação na câmera.
+    - [X] Adicionar zoom na câmera.
