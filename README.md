@@ -1,5 +1,35 @@
 Projeto de computação gráfica implementado em Rust utilizando OpenGL.
 
+# Resumo
+Reimplementação do projeto de computação gráfica feito em Rust utilizando OpenGL. <br/>
+</br>
+Nesse projeto, uma cena 3D deve ser implementada com uma ilha que possui dois tipos de plantas e animais. Os animais e plantas devem ficar na terra e não devem atravessar o chão. Além disso, os animais devem se movimentar sem colidir com outro animal ou uma planta.
+
+# Comandos
+
+### Movimentação
+Tecla | Comando
+|-----|--------
+`W`| Andar para a frente.
+`S`| Andar para a trás.
+`A`| Andar para a esquerda.
+`D`| Andar para a direita.
+
+### Rotação da câmera
+Tecla | Comando
+|-----|--------
+`Seta para esquerda` (&larr;) | Vira a câmera para a esquerda.
+`Seta para direita` (&rarr;) | Vira a câmera para a direita.
+`Seta para cima` (&uarr;) | Vira a câmera para a cima.
+`Seta para baixo` (&darr;) | Vira a câmera para a baixo.
+
+## Zoom in/out
+Tecla | Comando
+|-----|-------
+`-` | Reduz o zoom.
+`+` | Aumenta o zoom.
+
+# Objetivos
 O projeto deve ter: <br>
   - [X] Geração aleatória de terreno (ilha).
     - [X] Adicionar height map para geração de terreno.
@@ -31,3 +61,8 @@ O projeto deve ter: <br>
     - [X] Adicionar movimentação da câmera.
     - [X] Adicionar rotação na câmera.
     - [X] Adicionar zoom na câmera.
+
+# Notas
+- Aparentemente não é possível mover o cursor utilizando a biblioteca `glium`, então a rotação da câmera só utiliza as setas do teclado.
+- Aparentemente a biblioteca `obj-rs` não coleta as malhas dos arquivos `.obj` de forma separada, então as todos os elementos das plantas são uma malha só (o modelo 3D diferencia o troco das folhas).
+- Como o projeto é apenas um exercício extra de computação gráfica, o projeto não possui uma cobertura de 100% nos testes e nem tudo está completamente documentado.
