@@ -113,10 +113,20 @@ impl Entity {
             _ => return,
         };
 
-        let (signal_x, signal_z) = (
-            (target_x - self.position[0]).signum(),
-            (target_z - self.position[2]).signum(),
-        );
+        let delta_x = target_x - self.position[0];
+        let delta_z = target_z - self.position[2];
+
+        let signal_x = if delta_x == 0_f32 {
+            0_f32
+        } else {
+            delta_x.signum()
+        };
+
+        let signal_z = if delta_z == 0_f32 {
+            0_f32
+        } else {
+            delta_z.signum()
+        };
 
         if self.position[0] == target_x && self.position[2] == target_z {
             self.entity_mode = EntityMode::Idle;
