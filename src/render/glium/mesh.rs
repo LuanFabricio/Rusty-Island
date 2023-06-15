@@ -107,6 +107,14 @@ impl Mesh {
         }
     }
 
+    pub fn set_diffuse(&mut self, diffuse: [f32; 3]) {
+        self.diffuse = diffuse;
+    }
+
+    pub fn set_specular(&mut self, specular: [f32; 3]) {
+        self.specular = specular;
+    }
+
     pub fn set_position(&mut self, new_position: [f32; 3]) {
         self.matrix[3][0] = new_position[0];
         self.matrix[3][1] = new_position[1];
