@@ -10,10 +10,10 @@ Nesse projeto, uma cena 3D deve ser implementada com uma ilha que possui dois ti
 ### Movimentação
 Tecla | Comando
 |-----|--------
-`W`| Andar para a frente.
-`S`| Andar para a trás.
-`A`| Andar para a esquerda.
-`D`| Andar para a direita.
+`W`| Anda para frente.
+`S`| Anda para trás.
+`A`| Anda para a esquerda.
+`D`| Anda para a direita.
 
 ### Rotação da câmera
 Tecla | Comando
@@ -27,7 +27,14 @@ Tecla | Comando
 Tecla | Comando
 |-----|-------
 `-` | Reduz o zoom.
-`+` | Aumenta o zoom.
+`=` | Aumenta o zoom.
+
+# Como rodar o projeto
+Para rodar o projeto basta executar `cargo run` para executar a versão de debug(sem otimização) ou `cargo run --release` para executar a versão mais otimizada.
+
+Caso você queria apenas gerar o binário utilize o comando `cargo build` para gerar a versão de debug  na pasta target/debug ou `cargo build --release` para gerar a versão mais otimizada na pasta target/release.
+
+O nome do binário é `rusty-island`.
 
 # Objetivos
 O projeto deve ter: <br>
