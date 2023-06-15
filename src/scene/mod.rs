@@ -40,12 +40,27 @@ impl<const W: usize, const H: usize> Scene<W, H> {
         let plant1_obj = obj_reader::ObjReader::new("assets/plant1.obj").unwrap();
         let plant2_obj = obj_reader::ObjReader::new("assets/plant2.obj").unwrap();
         let animal1_obj = obj_reader::ObjReader::new("assets/animal1.obj").unwrap();
+        let animal2_obj = obj_reader::ObjReader::new("assets/animal2.obj").unwrap();
+
+        // HACK: obj_reader does not read the diffuse and specular colors
+        // so i'm hard coding here.
+        let mut plant1 = Mesh::from_obj(plant1_obj.get_obj(), display);
+        const PLANT1_DIFFUSE: [f32; 3] = [0.237683, 0.640000, 0.010366];
+        const PLANT1_SPECULAR: [f32; 3] = [1.0, 1.0, 1.0];
+        plant1.set_diffuse(PLANT1_DIFFUSE);
+        plant1.set_specular(PLANT1_SPECULAR);
+
+        let mut plant2 = Mesh::from_obj(plant2_obj.get_obj(), display);
+        const PLANT2_DIFFUSE: [f32; 3] = [0.009721, 0.479320, 0.003347];
+        const PLANT2_SPECULAR: [f32; 3] = [1.0, 1.0, 1.0];
+        plant2.set_diffuse(PLANT2_DIFFUSE);
+        plant2.set_specular(PLANT2_SPECULAR);
 
         MeshMap {
-            plant1: Mesh::from_obj(plant1_obj.get_obj(), display),
-            plant2: Mesh::from_obj(plant2_obj.get_obj(), display),
+            plant1,
+            plant2,
             animal1: Mesh::from_obj(animal1_obj.get_obj(), display),
-            animal2: Mesh::from_obj(animal1_obj.get_obj(), display),
+            animal2: Mesh::from_obj(animal2_obj.get_obj(), display),
         }
     }
 
@@ -153,7 +168,7 @@ impl<const W: usize, const H: usize> Scene<W, H> {
         for animal in self.animals.iter() {
             let mesh = match animal.get_type() {
                 EntityType::Animal1 => &mut self.mesh_map.animal1,
-                EntityType::Animal2 => &mut self.mesh_map.animal1,
+                EntityType::Animal2 => &mut self.mesh_map.animal2,
                 _ => break,
             };
 
